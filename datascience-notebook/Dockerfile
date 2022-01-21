@@ -102,8 +102,10 @@ RUN set -x && \
 # taking effect properly on the .local folder in the jovyan home dir.
 RUN julia -e 'import Pkg; Pkg.update()' && \
     julia -e 'import Pkg; Pkg.add("HDF5")' && \
-    julia -e 'using Pkg; pkg"add IJulia"; pkg"precompile"' && \
+    julia -e 'using Pkg; pkg"add IJulia Revise"; pkg"precompile"' && \
     # move kernelspec out of home \
+    chmod -R ugo+rx ${JULIA_DEPOT_PATH} && \
+    unset JULIA_DEPOT_PATH && \
     mv "${HOME}/.local/share/jupyter/kernels/julia"* "${CONDA_DIR}/share/jupyter/kernels/" && \
     chmod -R go+rx "${CONDA_DIR}/share/jupyter" && \
     rm -rf "${HOME}/.local" && \
